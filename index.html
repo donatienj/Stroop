@@ -73,6 +73,20 @@
 		#test-screen h1 {
 			color: #dc2626;
 		}
+
+		#word-grid {
+			display: grid;
+			grid-template-columns: repeat(5, minmax(0, 1fr));
+			grid-template-rows: repeat(10, 1fr);
+			gap: 12px 28px;
+			width: min(720px, 100%);
+			font-size: clamp(1.1rem, 3vw, 1.75rem);
+			font-weight: bold;
+		}
+
+		.word {
+			text-align: center;
+		}
 	</style>
 </head>
 <body>
@@ -88,12 +102,13 @@
 		</section>
 
 		<section id="test-screen" class="screen" aria-labelledby="test-title">
-			<h1 id="test-title">Épreuve A</h1>
+			<h1 id="test-title" hidden>Épreuve A</h1>
+			<div id="word-grid" aria-label="Suite de mots"></div>
 		</section>
 
 		<section id="end-screen" class="screen" aria-labelledby="end-title">
 			<h1 id="end-title">Fin de la première épreuve</h1>
-			<button id="continue-button" type="button" hidden>Continuer</button>
+			<button id="continue-button" type="button" hidden></button>
 		</section>
 	</main>
 
@@ -104,8 +119,32 @@
 		const countdownElement = document.querySelector('#countdown');
 		const testTitleElement = document.querySelector('#test-title');
 		const endTitleElement = document.querySelector('#end-title');
+		const wordGridElement = document.querySelector('#word-grid');
 		const exerciseNames = ['A', 'B', 'C'];
+		const continueLabels = [
+			'Commencer la seconde épreuve',
+			'Commencer la troisième épreuve'
+		];
+		const words = [
+			'vert', 'vert', 'rouge', 'jaune', 'vert',
+			'bleu', 'vert', 'bleu', 'vert', 'jaune',
+			'bleu', 'vert', 'jaune', 'rouge', 'jaune',
+			'jaune', 'jaune', 'jaune', 'bleu', 'jaune',
+			'jaune', 'rouge', 'rouge', 'bleu', 'bleu',
+			'vert', 'bleu', 'vert', 'rouge', 'bleu',
+			'vert', 'jaune', 'bleu', 'vert', 'vert',
+			'bleu', 'rouge', 'jaune', 'vert', 'rouge',
+			'rouge', 'vert', 'jaune', 'bleu', 'rouge',
+			'rouge', 'rouge', 'rouge', 'bleu', 'bleu'
+		];
 		let currentExercise = 0;
+
+		words.forEach((word) => {
+			const wordElement = document.createElement('span');
+			wordElement.className = 'word';
+			wordElement.textContent = word;
+			wordGridElement.append(wordElement);
+		});
 
 		function showScreen(screenId) {
 			screens.forEach((screen) => {
@@ -145,6 +184,7 @@
 
 			setTimeout(() => {
 				if (currentExercise < exerciseNames.length - 1) {
+					continueButton.textContent = continueLabels[currentExercise];
 					continueButton.hidden = false;
 				}
 			}, 10000);
