@@ -84,6 +84,10 @@
 			font-weight: bold;
 		}
 
+		#word-grid.column-flow {
+			grid-auto-flow: column;
+		}
+
 		.word {
 			text-align: center;
 		}
@@ -159,7 +163,7 @@
 			'bleu', 'vert', 'jaune', 'bleu', 'bleu'
 		];
 		const stroopPairs = [
-			['bleu', 'encre'], ['vert', 'jaune'], ['vert', 'rouge'], ['bleu', 'jaune'], ['vert', 'jaune'],
+			['bleu', 'vert'], ['vert', 'jaune'], ['vert', 'rouge'], ['bleu', 'jaune'], ['vert', 'jaune'],
 			['rouge', 'vert'], ['rouge', 'vert'], ['bleu', 'vert'], ['bleu', 'rouge'], ['vert', 'rouge'],
 			['jaune', 'bleu'], ['jaune', 'bleu'], ['rouge', 'bleu'], ['rouge', 'vert'], ['rouge', 'bleu'],
 			['bleu', 'rouge'], ['jaune', 'vert'], ['vert', 'rouge'], ['rouge', 'jaune'], ['bleu', 'jaune'],
@@ -181,6 +185,7 @@
 
 		function renderItems(items, itemRenderer, ariaLabel) {
 			wordGridElement.replaceChildren();
+			wordGridElement.classList.toggle('column-flow', currentExercise === 0);
 			wordGridElement.setAttribute('aria-label', ariaLabel);
 			items.forEach((item) => wordGridElement.append(itemRenderer(item)));
 		}
