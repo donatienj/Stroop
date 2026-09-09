@@ -179,32 +179,44 @@
 		};
 		let currentExercise = 0;
 
-		function renderExercise() {
+		function renderItems(items, itemRenderer, ariaLabel) {
 			wordGridElement.replaceChildren();
-			wordGridElement.setAttribute(
-				'aria-label',
-				currentExercise === 1
-					? 'Suite de rectangles colorés'
-					: currentExercise === 2 ? 'Suite de mots colorés' : 'Suite de mots'
-			);
+			wordGridElement.setAttribute('aria-label', ariaLabel);
+			items.forEach((item) => wordGridElement.append(itemRenderer(item)));
+		}
 
-			const items = currentExercise === 1 ? colors : currentExercise === 2 ? stroopPairs : words;
-			items.forEach((item) => {
-				const isRectangle = currentExercise === 1;
-				const isStroopWord = currentExercise === 2;
-				const itemElement = document.createElement(isRectangle ? 'div' : 'span');
-				itemElement.className = isRectangle ? 'color-rectangle' : isStroopWord ? 'ink-word' : 'word';
-				itemElement.textContent = isRectangle ? '' : isStroopWord ? item[0] : item;
-				if (currentExercise === 1) {
-					itemElement.style.backgroundColor = colorValues[item];
-					itemElement.setAttribute('aria-label', item);
-				}
-				if (isStroopWord) {
-					itemElement.style.color = colorValues[item[1]];
-					itemElement.setAttribute('aria-label', `${item[0]}, encre ${item[1]}`);
-				}
-				wordGridElement.append(itemElement);
-			});
+		function createWordElement(word) {
+			const wordElement = document.createElement('span');
+			wordElement.className = 'word';
+			wordElement.textContent = word;
+			return wordElement;
+		}
+
+		function createRectangleElement(color) {
+			const rectangleElement = document.createElement('div');
+			rectangleElement.className = 'color-rectangle';
+			rectangleElement.style.backgroundColor = colorValues[color];
+			rectangleElement.setAttribute('aria-label', color);
+			return rectangleElement;
+		}
+
+		function createStroopElement([word, ink]) {
+			const wordElement = document.createElement('span');
+			wordElement.className = 'ink-word';
+			wordElement.textContent = word;
+			wordElement.style.color = colorValues[ink];
+			wordElement.setAttribute('aria-label', `${word}, encre ${ink}`);
+			return wordElement;
+		}
+
+		function renderExercise() {
+			const exerciseRenderers = [
+				() => renderItems(words, createWordElement, 'Suite de mots'),
+				() => renderItems(colors, createRectangleElement, 'Suite de rectangles colorés'),
+				() => renderItems(stroopPairs, createStroopElement, 'Suite de mots colorés')
+			];
+
+			exerciseRenderers[currentExercise]();
 		}
 
 		function showScreen(screenId) {
