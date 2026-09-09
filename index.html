@@ -88,6 +88,10 @@
 			text-align: center;
 		}
 
+		.ink-word {
+			text-align: center;
+		}
+
 		.color-rectangle {
 			min-height: 42px;
 			border-radius: 4px;
@@ -154,29 +158,50 @@
 			'rouge', 'bleu', 'vert', 'jaune', 'vert',
 			'bleu', 'vert', 'jaune', 'bleu', 'bleu'
 		];
+		const stroopPairs = [
+			['bleu', 'encre'], ['vert', 'jaune'], ['vert', 'rouge'], ['bleu', 'jaune'], ['vert', 'jaune'],
+			['rouge', 'vert'], ['rouge', 'vert'], ['bleu', 'vert'], ['bleu', 'rouge'], ['vert', 'rouge'],
+			['jaune', 'bleu'], ['jaune', 'bleu'], ['rouge', 'bleu'], ['rouge', 'vert'], ['rouge', 'bleu'],
+			['bleu', 'rouge'], ['jaune', 'vert'], ['vert', 'rouge'], ['rouge', 'jaune'], ['bleu', 'jaune'],
+			['vert', 'bleu'], ['rouge', 'jaune'], ['vert', 'jaune'], ['jaune', 'rouge'], ['jaune', 'vert'],
+			['jaune', 'jaune'], ['bleu', 'rouge'], ['rouge', 'jaune'], ['jaune', 'vert'], ['bleu', 'jaune'],
+			['rouge', 'bleu'], ['vert', 'vert'], ['jaune', 'jaune'], ['vert', 'jaune'], ['jaune', 'rouge'],
+			['jaune', 'rouge'], ['rouge', 'rouge'], ['jaune', 'vert'], ['jaune', 'vert'], ['vert', 'jaune'],
+			['bleu', 'rouge'], ['jaune', 'vert'], ['bleu', 'rouge'], ['vert', 'vert'], ['vert', 'bleu'],
+			['vert', 'bleu'], ['vert', 'jaune'], ['jaune', 'rouge'], ['rouge', 'bleu'], ['bleu', 'rouge']
+		];
 		const colorValues = {
 			jaune: '#facc15',
 			bleu: '#2563eb',
 			vert: '#16a34a',
-			rouge: '#dc2626'
+			rouge: '#dc2626',
+			encre: '#111827'
 		};
 		let currentExercise = 0;
 
 		function renderExercise() {
-			const items = currentExercise === 1 ? colors : words;
 			wordGridElement.replaceChildren();
 			wordGridElement.setAttribute(
 				'aria-label',
-				currentExercise === 1 ? 'Suite de rectangles colorés' : 'Suite de mots'
+				currentExercise === 1
+					? 'Suite de rectangles colorés'
+					: currentExercise === 2 ? 'Suite de mots colorés' : 'Suite de mots'
 			);
 
+			const items = currentExercise === 1 ? colors : currentExercise === 2 ? stroopPairs : words;
 			items.forEach((item) => {
-				const itemElement = document.createElement(currentExercise === 1 ? 'div' : 'span');
-				itemElement.className = currentExercise === 1 ? 'color-rectangle' : 'word';
-				itemElement.textContent = currentExercise === 1 ? '' : item;
+				const isRectangle = currentExercise === 1;
+				const isStroopWord = currentExercise === 2;
+				const itemElement = document.createElement(isRectangle ? 'div' : 'span');
+				itemElement.className = isRectangle ? 'color-rectangle' : isStroopWord ? 'ink-word' : 'word';
+				itemElement.textContent = isRectangle ? '' : isStroopWord ? item[0] : item;
 				if (currentExercise === 1) {
 					itemElement.style.backgroundColor = colorValues[item];
 					itemElement.setAttribute('aria-label', item);
+				}
+				if (isStroopWord) {
+					itemElement.style.color = colorValues[item[1]];
+					itemElement.setAttribute('aria-label', `${item[0]}, encre ${item[1]}`);
 				}
 				wordGridElement.append(itemElement);
 			});
