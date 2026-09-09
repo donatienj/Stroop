@@ -73,10 +73,6 @@
 		#test-screen h1 {
 			color: #dc2626;
 		}
-
-		#time-left {
-			font-size: 1.25rem;
-		}
 	</style>
 </head>
 <body>
@@ -93,19 +89,23 @@
 
 		<section id="test-screen" class="screen" aria-labelledby="test-title">
 			<h1 id="test-title">Épreuve A</h1>
-			<p id="time-left">45 secondes restantes</p>
 		</section>
 
 		<section id="end-screen" class="screen" aria-labelledby="end-title">
 			<h1 id="end-title">Fin de la première épreuve</h1>
+			<button id="continue-button" type="button" hidden>Continuer</button>
 		</section>
 	</main>
 
 	<script>
 		const screens = document.querySelectorAll('.screen');
 		const startButton = document.querySelector('#start-button');
+		const continueButton = document.querySelector('#continue-button');
 		const countdownElement = document.querySelector('#countdown');
-		const timeLeftElement = document.querySelector('#time-left');
+		const testTitleElement = document.querySelector('#test-title');
+		const endTitleElement = document.querySelector('#end-title');
+		const exerciseNames = ['A', 'B', 'C'];
+		let currentExercise = 0;
 
 		function showScreen(screenId) {
 			screens.forEach((screen) => {
@@ -115,6 +115,7 @@
 
 		function startTest() {
 			startButton.disabled = true;
+			continueButton.hidden = true;
 			showScreen('countdown-screen');
 
 			let countdown = 3;
@@ -132,23 +133,31 @@
 		}
 
 		function startExercise() {
+			testTitleElement.textContent = `Épreuve ${exerciseNames[currentExercise]}`;
 			showScreen('test-screen');
 
-			let secondsLeft = 45;
-			timeLeftElement.textContent = `${secondsLeft} secondes restantes`;
+			setTimeout(endExercise, 45000);
+		}
 
-			const exerciseTimer = setInterval(() => {
-				secondsLeft -= 1;
-				timeLeftElement.textContent = `${secondsLeft} seconde${secondsLeft > 1 ? 's' : ''} restante${secondsLeft > 1 ? 's' : ''}`;
+		function endExercise() {
+			endTitleElement.textContent = `Fin de l'épreuve ${exerciseNames[currentExercise]}`;
+			showScreen('end-screen');
 
-				if (secondsLeft === 0) {
-					clearInterval(exerciseTimer);
-					showScreen('end-screen');
+			setTimeout(() => {
+				if (currentExercise < exerciseNames.length - 1) {
+					continueButton.hidden = false;
 				}
-			}, 1000);
+			}, 10000);
+		}
+
+		function continueTest() {
+			currentExercise += 1;
+			continueButton.hidden = true;
+			startTest();
 		}
 
 		startButton.addEventListener('click', startTest);
+		continueButton.addEventListener('click', continueTest);
 	</script>
 </body>
 </html>
