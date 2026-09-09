@@ -87,6 +87,11 @@
 		.word {
 			text-align: center;
 		}
+
+		.color-rectangle {
+			min-height: 42px;
+			border-radius: 4px;
+		}
 	</style>
 </head>
 <body>
@@ -137,14 +142,45 @@
 			'rouge', 'vert', 'jaune', 'bleu', 'rouge',
 			'rouge', 'rouge', 'rouge', 'bleu', 'bleu'
 		];
+		const colors = [
+			'jaune', 'bleu', 'vert', 'rouge', 'bleu',
+			'bleu', 'rouge', 'rouge', 'vert', 'bleu',
+			'vert', 'vert', 'jaune', 'jaune', 'vert',
+			'rouge', 'jaune', 'jaune', 'bleu', 'rouge',
+			'rouge', 'jaune', 'vert', 'bleu', 'jaune',
+			'vert', 'vert', 'rouge', 'rouge', 'rouge',
+			'bleu', 'bleu', 'jaune', 'rouge', 'rouge',
+			'bleu', 'jaune', 'bleu', 'vert', 'rouge',
+			'rouge', 'bleu', 'vert', 'jaune', 'vert',
+			'bleu', 'vert', 'jaune', 'bleu', 'bleu'
+		];
+		const colorValues = {
+			jaune: '#facc15',
+			bleu: '#2563eb',
+			vert: '#16a34a',
+			rouge: '#dc2626'
+		};
 		let currentExercise = 0;
 
-		words.forEach((word) => {
-			const wordElement = document.createElement('span');
-			wordElement.className = 'word';
-			wordElement.textContent = word;
-			wordGridElement.append(wordElement);
-		});
+		function renderExercise() {
+			const items = currentExercise === 1 ? colors : words;
+			wordGridElement.replaceChildren();
+			wordGridElement.setAttribute(
+				'aria-label',
+				currentExercise === 1 ? 'Suite de rectangles colorés' : 'Suite de mots'
+			);
+
+			items.forEach((item) => {
+				const itemElement = document.createElement(currentExercise === 1 ? 'div' : 'span');
+				itemElement.className = currentExercise === 1 ? 'color-rectangle' : 'word';
+				itemElement.textContent = currentExercise === 1 ? '' : item;
+				if (currentExercise === 1) {
+					itemElement.style.backgroundColor = colorValues[item];
+					itemElement.setAttribute('aria-label', item);
+				}
+				wordGridElement.append(itemElement);
+			});
+		}
 
 		function showScreen(screenId) {
 			screens.forEach((screen) => {
@@ -173,6 +209,7 @@
 
 		function startExercise() {
 			testTitleElement.textContent = `Épreuve ${exerciseNames[currentExercise]}`;
+			renderExercise();
 			showScreen('test-screen');
 
 			setTimeout(endExercise, 45000);
